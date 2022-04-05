@@ -1,5 +1,4 @@
 package org.maps;
-import java.util.*;
 
 public class inputs {
     static final int[][] processing_cost = {
