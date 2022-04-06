@@ -7,7 +7,7 @@ import static org.maps.Constants.MAX_TASKS;
 
 
 public class Population {
-    Vector<Chromosome> population_array;
+    Vector<Chromosome> population_array = new Vector<Chromosome>();
     float average_fitness_val;
 
     Vector<Chromosome> population_gen_random(){
@@ -109,5 +109,16 @@ public class Population {
         }
         return result;
     }
+
+    void generation(){
+//        Iterator itr = population_array.iterator();
+        float sum_fitness;
+
+        for(Object var:population_array){
+
+        }
+
+    }
+
 
 }
