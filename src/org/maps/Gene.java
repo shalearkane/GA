@@ -1,13 +1,11 @@
 package org.maps;
 
-import java.util.ArrayList;
-
 public class Gene {
-    final int tasks;
+    final int task;
     final int processor;
 
-    public Gene(Integer tasks, Integer processor) {
-        this.tasks = tasks;
+    public Gene(Integer task, Integer processor) {
+        this.task = task;
         this.processor = processor;
     }
 }
