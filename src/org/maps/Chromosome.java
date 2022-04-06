@@ -3,16 +3,16 @@ package org.maps;
 import java.util.*;
 
 public class Chromosome {
-    public Gene[] gene = new Gene[Constants.MAX_TASKS+1];
+    public Vector<Gene> gene = new Vector<>(Constants.MAX_PROCESSORS + 1);
     public Integer makespan;
     public boolean feasibility;
     public float fitness;
-    public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(Constants.MAX_PROCESSORS+1);
+    public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(Constants.MAX_PROCESSORS + 1);
 
     public void set_makespan() {
         int max_end_time = 0;
         for (Vector<ScheduledTaskDetails> processor : schedule) {
-                max_end_time = Integer.max(processor.lastElement().end_time, max_end_time);
+            max_end_time = Integer.max(processor.lastElement().end_time, max_end_time);
         }
         makespan = max_end_time;
     }
@@ -22,19 +22,20 @@ public class Chromosome {
         Vector<Queue<Gene>> taskQueueOnProcessor = new Vector<>(Constants.MAX_PROCESSORS + 1);
         Set<Integer> completed_tasks = new HashSet<>();
         Map<Integer, Integer> task_to_processor = new HashMap<>();
+        Map<Integer, Integer> end_time_of_task = new HashMap<>();
         for (Gene g : gene) {
+            if(g.processor == 0 || g.task == 0) continue;
             Queue<Gene> q = taskQueueOnProcessor.get(g.processor);
             q.add(g);
             task_to_processor.put(g.task, g.processor);
             taskQueueOnProcessor.set(g.processor, q);
         }
 
-        boolean has_any_task_completed = true;
-
-        while (has_any_task_completed) {
+        boolean has_any_task_completed;
+        do {
             has_any_task_completed = false;
-            for(int i = 1; i<=Constants.MAX_PROCESSORS; i++) {
-            Queue<Gene> q = taskQueueOnProcessor.get(i);
+            for (int i = 1; i <= Constants.MAX_PROCESSORS; i++) {
+                Queue<Gene> q = taskQueueOnProcessor.get(i);
                 Gene g = q.peek();
                 int max_comm_delay = 0;
                 boolean dependencies_satisfied = true;
@@ -57,20 +58,32 @@ public class Chromosome {
                 if (dependencies_satisfied) {
                     has_any_task_completed = true;
                     q.remove();
-                    taskQueueOnProcessor.set(i,q);
+                    taskQueueOnProcessor.set(i, q);
                     completed_tasks.add(g.task);
 
-                    int start_time = Integer.max(schedule.get(g.processor).lastElement().end_time, max_comm_delay);
-                    int end_time = start_time + Inputs.processing_cost[g.task][g.processor];
                     ScheduledTaskDetails sd = new ScheduledTaskDetails();
+                    sd.start_time = Integer.max(schedule.get(g.processor).lastElement().end_time, max_comm_delay);
+                    sd.end_time = sd.start_time + Inputs.processing_cost[g.task][g.processor];
                     sd.g = g;
-                    sd.start_time = start_time;
-                    sd.end_time = end_time;
+
                     Vector<ScheduledTaskDetails> processor_schedule = schedule.get(g.processor);
                     processor_schedule.add(sd);
                     schedule.set(g.processor, processor_schedule);
+
+                    // update maps
+                    end_time_of_task.put(g.task, sd.end_time);
                 }
+            }
+        } while (has_any_task_completed);
+
+        // check if the queue is empty
+        feasibility = true;
+        for(Queue<Gene> top : taskQueueOnProcessor) {
+            if (!top.isEmpty()) {
+                feasibility = false;
+                break;
             }
         }
     }
+
 }
