@@ -1,27 +1,76 @@
 package org.maps;
 
-import java.util.Vector;
+import java.util.*;
 
 public class Chromosome {
-    public Vector<Gene> gene;
+    public Gene[] gene = new Gene[Constants.MAX_TASKS+1];
     public Integer makespan;
     public boolean feasibility;
     public float fitness;
-    public Vector<Vector<ScheduledTaskDetails>> schedule;
+    public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(Constants.MAX_PROCESSORS+1);
 
     public void set_makespan() {
         int max_end_time = 0;
-        for(Vector <ScheduledTaskDetails> processor : schedule) {
-            for(ScheduledTaskDetails schedtls : processor) {
-                max_end_time = Integer.max(schedtls.end_time, max_end_time);
-            }
+        for (Vector<ScheduledTaskDetails> processor : schedule) {
+                max_end_time = Integer.max(processor.lastElement().end_time, max_end_time);
         }
         makespan = max_end_time;
     }
 
     public void set_schedule() {
-        //
+        // 3 queue for task
+        Vector<Queue<Gene>> taskQueueOnProcessor = new Vector<>(Constants.MAX_PROCESSORS + 1);
+        Set<Integer> completed_tasks = new HashSet<>();
+        Map<Integer, Integer> task_to_processor = new HashMap<>();
+        for (Gene g : gene) {
+            Queue<Gene> q = taskQueueOnProcessor.get(g.processor);
+            q.add(g);
+            task_to_processor.put(g.task, g.processor);
+            taskQueueOnProcessor.set(g.processor, q);
+        }
+
+        boolean has_any_task_completed = true;
+
+        while (has_any_task_completed) {
+            has_any_task_completed = false;
+            for(int i = 1; i<=Constants.MAX_PROCESSORS; i++) {
+            Queue<Gene> q = taskQueueOnProcessor.get(i);
+                Gene g = q.peek();
+                int max_comm_delay = 0;
+                boolean dependencies_satisfied = true;
+                // check all dependencies have completed or not
+                assert g != null;
+                Set<Integer> dependency_list = Inputs.dependency.get(g.task);
+                for (Integer d_task : dependency_list) {
+                    if (!completed_tasks.contains(d_task)) {
+                        dependencies_satisfied = false;
+                        break;
+                    }
+                    for (Comm_cost_pair ccp : Inputs.dag[g.task]) {
+                        if (ccp.to_node == d_task) {
+                            if (task_to_processor.get(d_task) != g.processor)
+                                max_comm_delay = Integer.max(max_comm_delay, ccp.comm_cost);
+                            break;
+                        }
+                    }
+                }
+                if (dependencies_satisfied) {
+                    has_any_task_completed = true;
+                    q.remove();
+                    taskQueueOnProcessor.set(i,q);
+                    completed_tasks.add(g.task);
+
+                    int start_time = Integer.max(schedule.get(g.processor).lastElement().end_time, max_comm_delay);
+                    int end_time = start_time + Inputs.processing_cost[g.task][g.processor];
+                    ScheduledTaskDetails sd = new ScheduledTaskDetails();
+                    sd.g = g;
+                    sd.start_time = start_time;
+                    sd.end_time = end_time;
+                    Vector<ScheduledTaskDetails> processor_schedule = schedule.get(g.processor);
+                    processor_schedule.add(sd);
+                    schedule.set(g.processor, processor_schedule);
+                }
+            }
+        }
     }
-
-
 }
