@@ -1,7 +1,6 @@
 package org.maps;
 
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 public class Inputs {
     static final int[][] processing_cost = {
@@ -34,6 +33,7 @@ public class Inputs {
     };
 
     static Vector<Set<Integer>> dependency = new Vector <>(Constants.MAX_TASKS+1);
+    //
 
     public static void main(String[] args) {
         System.out.println("Processing costs");
@@ -53,16 +53,25 @@ public class Inputs {
         }
     }
 
-    public Inputs() {
+    public static void generate_dependency_table() {
         //
+        for(int i = 0; i<=Constants.MAX_TASKS; i++) {
+            dependency.add(i, new HashSet<>());
+        }
         for(int i = 1; i<= Constants.MAX_TASKS;i++) {
             Comm_cost_pair[] ccp = dag[i];
-            System.out.println();
+            System.out.println(ccp.length);
             for(Comm_cost_pair p : ccp) {
                 Set<Integer> s = dependency.get(p.to_node);
                 s.add(i);
                 dependency.set(p.to_node, s);
             }
+        }
+        for(Set<Integer> s : dependency) {
+            for(Integer i : s) {
+                System.out.print(i);
+            }
+            System.out.println();
         }
     }
 }

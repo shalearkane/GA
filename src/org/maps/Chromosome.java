@@ -20,11 +20,22 @@ public class Chromosome {
     public void set_schedule() {
         // 3 queue for task
         Vector<Queue<Gene>> taskQueueOnProcessor = new Vector<>(Constants.MAX_PROCESSORS + 1);
+        Queue<Gene> q_temp = new LinkedList<>();
+        for (int i = 0; i <= Constants.MAX_PROCESSORS; i++) {
+            schedule.add(i, new Vector<>());
+            taskQueueOnProcessor.add(i, q_temp);
+        }
+        for (Vector<ScheduledTaskDetails> v : schedule) {
+            Gene g = new Gene(0, 0);
+            ScheduledTaskDetails sds = new ScheduledTaskDetails(g, 0, 0);
+            v.add(sds);
+        }
         Set<Integer> completed_tasks = new HashSet<>();
         Map<Integer, Integer> task_to_processor = new HashMap<>();
         Map<Integer, Integer> end_time_of_task = new HashMap<>();
+        Inputs.generate_dependency_table();
         for (Gene g : gene) {
-            if(g.processor == 0 || g.task == 0) continue;
+            if (g.processor == 0 || g.task == 0) continue;
             Queue<Gene> q = taskQueueOnProcessor.get(g.processor);
             q.add(g);
             task_to_processor.put(g.task, g.processor);
@@ -36,8 +47,9 @@ public class Chromosome {
             has_any_task_completed = false;
             for (int i = 1; i <= Constants.MAX_PROCESSORS; i++) {
                 Queue<Gene> q = taskQueueOnProcessor.get(i);
-                Gene g = q.peek();
-                int max_comm_delay = 0;
+                if(q.isEmpty()) continue;
+                final Gene g = q.peek();
+                int max_comm_ends = 0;
                 boolean dependencies_satisfied = true;
                 // check all dependencies have completed or not
                 assert g != null;
@@ -48,9 +60,11 @@ public class Chromosome {
                         break;
                     }
                     for (Comm_cost_pair ccp : Inputs.dag[g.task]) {
-                        if (ccp.to_node == d_task) {
-                            if (task_to_processor.get(d_task) != g.processor)
-                                max_comm_delay = Integer.max(max_comm_delay, ccp.comm_cost);
+                        if (ccp.to_node == g.task) {
+                            if (task_to_processor.get(d_task) != g.processor) {
+                                int comm_ends = ccp.comm_cost + end_time_of_task.get(d_task);
+                                max_comm_ends = Integer.max(max_comm_ends, comm_ends);
+                            }
                             break;
                         }
                     }
@@ -61,10 +75,9 @@ public class Chromosome {
                     taskQueueOnProcessor.set(i, q);
                     completed_tasks.add(g.task);
 
-                    ScheduledTaskDetails sd = new ScheduledTaskDetails();
-                    sd.start_time = Integer.max(schedule.get(g.processor).lastElement().end_time, max_comm_delay);
-                    sd.end_time = sd.start_time + Inputs.processing_cost[g.task][g.processor];
-                    sd.g = g;
+                    int start_time = Integer.max(schedule.get(g.processor).lastElement().end_time, max_comm_ends);
+                    int end_time = start_time + Inputs.processing_cost[g.task][g.processor];
+                    ScheduledTaskDetails sd = new ScheduledTaskDetails(g, start_time, end_time);
 
                     Vector<ScheduledTaskDetails> processor_schedule = schedule.get(g.processor);
                     processor_schedule.add(sd);
@@ -78,7 +91,7 @@ public class Chromosome {
 
         // check if the queue is empty
         feasibility = true;
-        for(Queue<Gene> top : taskQueueOnProcessor) {
+        for (Queue<Gene> top : taskQueueOnProcessor) {
             if (!top.isEmpty()) {
                 feasibility = false;
                 break;
