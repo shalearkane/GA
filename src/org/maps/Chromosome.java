@@ -7,6 +7,7 @@ public class Chromosome {
     public Integer makespan;
     public boolean feasibility;
     public float fitness;
+    public float average_cost;
     public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(Constants.MAX_PROCESSORS + 1);
 
     public void set_makespan() {
@@ -59,7 +60,7 @@ public class Chromosome {
                         dependencies_satisfied = false;
                         break;
                     }
-                    for (Comm_cost_pair ccp : Inputs.dag[g.task]) {
+                    for (Comm_cost_pair ccp : Inputs.dag[d_task]) {
                         if (ccp.to_node == g.task) {
                             if (task_to_processor.get(d_task) != g.processor) {
                                 int comm_ends = ccp.comm_cost + end_time_of_task.get(d_task);
@@ -74,7 +75,7 @@ public class Chromosome {
                     q.remove();
                     taskQueueOnProcessor.set(i, q);
                     completed_tasks.add(g.task);
-
+                    System.out.println(schedule.get(g.processor).lastElement().end_time + " : " + max_comm_ends);
                     int start_time = Integer.max(schedule.get(g.processor).lastElement().end_time, max_comm_ends);
                     int end_time = start_time + Inputs.processing_cost[g.task][g.processor];
                     ScheduledTaskDetails sd = new ScheduledTaskDetails(g, start_time, end_time);
