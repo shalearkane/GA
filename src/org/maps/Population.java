@@ -2,8 +2,7 @@ package org.maps;
 
 import java.util.*;
 
-import static org.maps.Constants.MAX_POPULATION;
-import static org.maps.Constants.MAX_TASKS;
+import static org.maps.Constants.*;
 
 
 public class Population {
@@ -110,13 +109,44 @@ public class Population {
         return result;
     }
 
-    void generation(){
-//        Iterator itr = population_array.iterator();
-        float sum_fitness;
+//    boolean cmp_fitness_val(Chromosome c1, Chromosome c2){
+//        assert(c1.fitness > 0 && c1.fitness <= 1);
+//        assert(c2.fitness > 0 && c2.fitness <= 1);
+//        return (c1.fitness > c2.fitness);
+//    }
 
-        for(Object var:population_array){
+    void generation(){
+        float sum_fitness = 0;
+        for(int i=0;i<population_array.size();i++){
+            population_array.get(i).calculate_details();
+            sum_fitness = sum_fitness + population_array.get(i).fitness;
+        }
+        float average_fitness_val = sum_fitness / (float) population_array.size();
+        population_array = roulette(population_array);
+
+        for (int i = 0; i < 14; i += 2){
+            Chromosome temp_1 = mutation(crossover(population_array.get(i), population_array.get(i + 1)).c1, Mutation_Rate);
+            Chromosome temp_2 = mutation(crossover(population_array.get(i), population_array.get(i + 1)).c2, Mutation_Rate);
+            if(temp_1.feasibility){
+                temp_1.calculate_details();
+                population_array.add(temp_1);
+            }
+            if(temp_2.feasibility){
+                temp_2.calculate_details();
+                population_array.add(temp_2);
+            }
 
         }
+
+        Collections.sort(population_array, new comparator.Cmp_fitness_val());
+        if(population_array.size() > MAX_POPULATION)
+            population_array.setSize(20);
+
+    }
+
+    void output(){
+
+
 
     }
 
