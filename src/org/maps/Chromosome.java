@@ -4,18 +4,11 @@ import java.util.*;
 
 public class Chromosome {
     public Vector<Gene> gene = new Vector<>(Constants.MAX_PROCESSORS + 1);
-    public Integer makespan;
-    public boolean feasibility;
-    public float fitness;
+    public Integer makespan = -1;
+    public boolean feasibility = false;
+    public float fitness = -1;
+    public float average_cost = -1;
     public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(Constants.MAX_PROCESSORS + 1);
-
-    public void set_makespan() {
-        int max_end_time = 0;
-        for (Vector<ScheduledTaskDetails> processor : schedule) {
-            max_end_time = Integer.max(processor.lastElement().end_time, max_end_time);
-        }
-        makespan = max_end_time;
-    }
 
     public void set_schedule() {
         // 3 queue for task
@@ -47,7 +40,7 @@ public class Chromosome {
             has_any_task_completed = false;
             for (int i = 1; i <= Constants.MAX_PROCESSORS; i++) {
                 Queue<Gene> q = taskQueueOnProcessor.get(i);
-                if(q.isEmpty()) continue;
+                if (q.isEmpty()) continue;
                 final Gene g = q.peek();
                 int max_comm_ends = 0;
                 boolean dependencies_satisfied = true;
@@ -59,7 +52,7 @@ public class Chromosome {
                         dependencies_satisfied = false;
                         break;
                     }
-                    for (Comm_cost_pair ccp : Inputs.dag[g.task]) {
+                    for (Comm_cost_pair ccp : Inputs.dag[d_task]) {
                         if (ccp.to_node == g.task) {
                             if (task_to_processor.get(d_task) != g.processor) {
                                 int comm_ends = ccp.comm_cost + end_time_of_task.get(d_task);
@@ -74,7 +67,7 @@ public class Chromosome {
                     q.remove();
                     taskQueueOnProcessor.set(i, q);
                     completed_tasks.add(g.task);
-
+                    System.out.println(schedule.get(g.processor).lastElement().end_time + " : " + max_comm_ends);
                     int start_time = Integer.max(schedule.get(g.processor).lastElement().end_time, max_comm_ends);
                     int end_time = start_time + Inputs.processing_cost[g.task][g.processor];
                     ScheduledTaskDetails sd = new ScheduledTaskDetails(g, start_time, end_time);
@@ -96,6 +89,38 @@ public class Chromosome {
                 feasibility = false;
                 break;
             }
+        }
+    }
+
+    public void set_makespan() {
+        int max_end_time = 0;
+        for (Vector<ScheduledTaskDetails> processor : schedule) {
+            max_end_time = Integer.max(processor.lastElement().end_time, max_end_time);
+        }
+        makespan = max_end_time;
+    }
+
+    public void set_average_cost() {
+        assert feasibility : "feasibility is not set or is false";
+        average_cost = 0;
+        for (Gene g : gene) {
+            average_cost += Inputs.processing_cost[g.task][g.processor];
+        }
+        average_cost /= Constants.MAX_TASKS;
+    }
+
+    public void set_fitness() {
+        assert average_cost != -1 : "average cost is not calculated";
+        assert makespan != -1 : "makespan is not calculated";
+        fitness = (float) (1.0 / (1.0 + average_cost * makespan));
+    }
+
+    public void calculate_details() {
+        set_schedule();
+        if (feasibility) {
+            set_makespan();
+            set_average_cost();
+            set_fitness();
         }
     }
 
