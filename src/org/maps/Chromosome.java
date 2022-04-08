@@ -115,4 +115,13 @@ public class Chromosome {
         fitness = (float) (1.0 / (1.0 + average_cost * makespan));
     }
 
+    public void calculate_details() {
+        set_schedule();
+        if (feasibility) {
+            set_makespan();
+            set_average_cost();
+            set_fitness();
+        }
+    }
+
 }

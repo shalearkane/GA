@@ -19,10 +19,7 @@ public class Main {
         c.gene.add(8, new Gene(7, 3));
         c.gene.add(9, new Gene(8, 1));
         c.gene.add(10, new Gene(10, 2));
-        c.set_schedule();
-        c.set_average_cost();
-        c.set_makespan();
-        c.set_fitness();
+        c.calculate_details();
         System.out.println(c.feasibility);
         for(Vector<ScheduledTaskDetails> v : c.schedule) {
             System.out.println("p");
