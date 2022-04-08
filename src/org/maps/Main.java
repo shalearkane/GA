@@ -20,6 +20,9 @@ public class Main {
         c.gene.add(9, new Gene(8, 1));
         c.gene.add(10, new Gene(10, 2));
         c.set_schedule();
+        c.set_average_cost();
+        c.set_makespan();
+        c.set_fitness();
         System.out.println(c.feasibility);
         for(Vector<ScheduledTaskDetails> v : c.schedule) {
             System.out.println("p");
@@ -27,6 +30,9 @@ public class Main {
                 System.out.println(sd.g.task + " " + sd.end_time);
             }
         }
+        System.out.println("Average cost " + c.average_cost);
+        System.out.println("Makespan : " + c.makespan);
+        System.out.println("Fitness : " + c.fitness);
     }
     // (1 : 3), (3 : 3), (4 : 2), (2 : 1), (5 : 3), (6 : 2), (9 : 2), (7 : 3), (8 : 1), (10 : 2),
 }
