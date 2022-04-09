@@ -2,19 +2,22 @@ package org.maps;
 
 import java.util.*;
 
+import static org.maps.Constants.MAX_PROCESSORS;
+import static org.maps.Constants.MAX_TASKS;
+
 public class Chromosome {
-    public Vector<Gene> gene = new Vector<>(Constants.MAX_PROCESSORS + 1);
+    public Vector<Gene> gene = new Vector<>(MAX_PROCESSORS + 1);
     public Integer makespan = -1;
     public boolean feasibility = false;
     public float fitness = -1;
     public float average_cost = -1;
-    public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(Constants.MAX_PROCESSORS + 1);
+    public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(MAX_PROCESSORS + 1);
 
     private void set_schedule() {
         // 3 queue for task
-        Vector<Queue<Gene>> taskQueueOnProcessor = new Vector<>(Constants.MAX_PROCESSORS + 1);
+        Vector<Queue<Gene>> taskQueueOnProcessor = new Vector<>(MAX_PROCESSORS + 1);
         Queue<Gene> q_temp = new LinkedList<>();
-        for (int i = 0; i <= Constants.MAX_PROCESSORS; i++) {
+        for (int i = 0; i <= MAX_PROCESSORS; i++) {
             schedule.add(i, new Vector<>());
             taskQueueOnProcessor.add(i, q_temp);
         }
@@ -38,7 +41,7 @@ public class Chromosome {
         boolean has_any_task_completed;
         do {
             has_any_task_completed = false;
-            for (int i = 1; i <= Constants.MAX_PROCESSORS; i++) {
+            for (int i = 1; i <= MAX_PROCESSORS; i++) {
                 Queue<Gene> q = taskQueueOnProcessor.get(i);
                 if (q.isEmpty()) continue;
                 final Gene g = q.peek();
@@ -106,7 +109,7 @@ public class Chromosome {
         for (Gene g : gene) {
             average_cost += Inputs.processing_cost[g.task][g.processor];
         }
-        average_cost /= Constants.MAX_TASKS;
+        average_cost /= MAX_TASKS;
     }
 
     private void set_fitness() {
