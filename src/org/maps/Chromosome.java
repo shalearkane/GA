@@ -10,7 +10,7 @@ public class Chromosome {
     public float average_cost = -1;
     public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(Constants.MAX_PROCESSORS + 1);
 
-    public void set_schedule() {
+    private void set_schedule() {
         // 3 queue for task
         Vector<Queue<Gene>> taskQueueOnProcessor = new Vector<>(Constants.MAX_PROCESSORS + 1);
         Queue<Gene> q_temp = new LinkedList<>();
@@ -92,7 +92,7 @@ public class Chromosome {
         }
     }
 
-    public void set_makespan() {
+    private void set_makespan() {
         int max_end_time = 0;
         for (Vector<ScheduledTaskDetails> processor : schedule) {
             max_end_time = Integer.max(processor.lastElement().end_time, max_end_time);
@@ -100,7 +100,7 @@ public class Chromosome {
         makespan = max_end_time;
     }
 
-    public void set_average_cost() {
+    private void set_average_cost() {
         assert feasibility : "feasibility is not set or is false";
         average_cost = 0;
         for (Gene g : gene) {
@@ -109,7 +109,7 @@ public class Chromosome {
         average_cost /= Constants.MAX_TASKS;
     }
 
-    public void set_fitness() {
+    private void set_fitness() {
         assert average_cost != -1 : "average cost is not calculated";
         assert makespan != -1 : "makespan is not calculated";
         fitness = (float) (1.0 / (1.0 + average_cost * makespan));
@@ -122,6 +122,16 @@ public class Chromosome {
             set_average_cost();
             set_fitness();
         }
+    }
+
+    public void print_chromosome() {
+        for (Gene g : gene) {
+            System.out.print("(" + g.task + ", " + g.processor + ")");
+        }
+    }
+
+    public void print_details() {
+        System.out.println("fitness: " + fitness + ", makespan: " + makespan + ", average_cost: " + average_cost);
     }
 
 }
