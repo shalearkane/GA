@@ -150,7 +150,6 @@ public class Population {
 
         Chromosome final_chromo = population_array.firstElement();
         final_chromo.print_chromosome();
-        population_array.firstElement().print_schedule;
         System.out.print("makespan final: ");
         System.out.println(final_chromo.makespan);
 
