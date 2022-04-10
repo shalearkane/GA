@@ -2,6 +2,7 @@ package org.maps.GA;
 
 import java.util.*;
 
+import static org.maps.Heft.Heft.get_heft_chromosome;
 import static org.maps.InputData.Constants.*;
 
 public class Population {
@@ -135,6 +136,28 @@ public class Population {
 
     }
 
-    void output() {
+    void Driver_code() {
+        Chromosome heft = get_heft_chromosome();
+        heft.print_chromosome();
+        System.out.print("makespan heft: ");
+        System.out.println(heft.makespan);
+
+        population(heft);
+        population_array.add(heft);
+        for(int i=0;i<200;i++){
+            generation();
+        }
+
+        Chromosome final_chromo = population_array.firstElement();
+        final_chromo.print_chromosome();
+        population_array.firstElement().print_schedule;
+        System.out.print("makespan final: ");
+        System.out.println(final_chromo.makespan);
+
+        for(int i=0;i<population_array.size();i++){
+            population_array.get(i).print_chromosome();
+        }
+
+
     }
 }
