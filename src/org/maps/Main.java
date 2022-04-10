@@ -1,6 +1,7 @@
 package org.maps;
 
 import org.maps.GA.Chromosome;
+import org.maps.GA.Population;
 import org.maps.Heft.Heft;
 
 public class Main {
@@ -32,10 +33,12 @@ public class Main {
 //        System.out.println("Makespan : " + c.makespan);
 //        System.out.println("Fitness : " + c.fitness);
 
-        Chromosome cc = Heft.get_heft_chromosome();
-        cc.calculate_details();
-        cc.print_details();
-        cc.print_chromosome();
+//        Chromosome cc = Heft.get_heft_chromosome();
+//        cc.calculate_details();
+//        cc.print_details();
+//        cc.print_chromosome();
+        Population p =  new Population();
+        p.Driver();
     }
     // (1 : 3), (3 : 3), (4 : 2), (2 : 1), (5 : 3), (6 : 2), (9 : 2), (7 : 3), (8 : 1), (10 : 2),
 }

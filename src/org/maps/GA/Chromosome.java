@@ -73,7 +73,6 @@ public class Chromosome {
                     q.remove();
                     taskQueueOnProcessor.set(i, q);
                     completed_tasks.add(g.task);
-                    System.out.println(schedule.get(g.processor).lastElement().end_time + " : " + max_comm_ends);
                     int start_time = Integer.max(schedule.get(g.processor).lastElement().end_time, max_comm_ends);
                     int end_time = start_time + Inputs.processing_cost[g.task][g.processor];
                     ScheduledTaskDetails sd = new ScheduledTaskDetails(g, start_time, end_time);

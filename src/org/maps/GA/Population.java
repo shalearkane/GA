@@ -1,6 +1,9 @@
 package org.maps.GA;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+import java.util.Vector;
 
 import static org.maps.Heft.Heft.get_heft_chromosome;
 import static org.maps.InputData.Constants.*;
@@ -15,15 +18,16 @@ public class Population {
         for (int i = 0; i < MAX_POPULATION - 1; i++) {
             Chromosome c = new Chromosome();
             Set<Integer> queued = new HashSet<>();
+            c.gene[0] = new Gene(0,0);
             for (int j = 1; j <= MAX_TASKS; j++) {
                 int task = rn.nextInt(MAX_TASKS) + 1;
                 while (queued.contains(task)) {
                     task = rn.nextInt(MAX_TASKS) + 1;
                 }
                 queued.add(task);
-                c.gene[j].task = task;
-                c.gene[j].processor = rn.nextInt(3) + 1;
+                c.gene[j] = new Gene(task, rn.nextInt(3)+1);
             }
+            c.calculate_details();
 
             if (c.feasibility) {
                 result.add(c);
@@ -51,7 +55,7 @@ public class Population {
         int r = rn.nextInt(MAX_TASKS) + 1;
 
         for (int i = 1; i <= r; i++) {
-            offspring_chromo.c1.gene[counter_for_c1] =  A.gene[i];
+            offspring_chromo.c1.gene[counter_for_c1] = A.gene[i];
             counter_for_c1++;
             tasks_in_c1.add(A.gene[i].task);
 
@@ -63,12 +67,12 @@ public class Population {
 
         for (int i = 1; i <= MAX_TASKS; i++) {
             if (!tasks_in_c1.contains(B.gene[i].task)) {
-                offspring_chromo.c1.gene[i] =  B.gene[i];
+                offspring_chromo.c1.gene[i] = B.gene[i];
                 counter_for_c1++;
             }
 
             if (!tasks_in_c2.contains(A.gene[i].task)) {
-                offspring_chromo.c2.gene[i] =  A.gene[i];
+                offspring_chromo.c2.gene[i] = A.gene[i];
                 counter_for_c2++;
             }
         }
@@ -83,7 +87,7 @@ public class Population {
             int a = rn.nextInt(MAX_TASKS) + 1;
             int b = rn.nextInt(MAX_TASKS) + 1;
             if (off_spring.gene[a].processor != off_spring.gene[b].processor || off_spring.gene[a].task != off_spring.gene[b].task) {
-                Gene temp=  off_spring.gene[a];
+                Gene temp = off_spring.gene[a];
                 off_spring.gene[a] = off_spring.gene[b];
                 off_spring.gene[b] = temp;
             }
@@ -135,17 +139,19 @@ public class Population {
 
         population_array.sort(new Comparator.Cmp_fitness_val());
         if (population_array.size() > MAX_POPULATION) population_array.setSize(20);
+        System.out.println(average_fitness_val);
     }
 
-    void Driver_code() {
+    public void Driver() {
         Chromosome heft = get_heft_chromosome();
+        heft.calculate_details();
         heft.print_chromosome();
         System.out.print("makespan heft: ");
         System.out.println(heft.makespan);
 
         population(heft);
         population_array.add(heft);
-        for(int i=0;i<200;i++){
+        for (int i = 0; i < 200; i++) {
             generation();
         }
 
@@ -154,11 +160,8 @@ public class Population {
         System.out.print("makespan final: ");
         System.out.println(final_chromo.makespan);
 
-        for(int i=0;i<population_array.size();i++){
-            population_array.get(i).print_chromosome();
+        for (Chromosome chromosome : population_array) {
+            chromosome.print_chromosome();
         }
-
-
     }
-
 }
