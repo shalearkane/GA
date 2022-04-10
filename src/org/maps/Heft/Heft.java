@@ -1,12 +1,18 @@
-package org.maps;
+package org.maps.Heft;
+
+import org.maps.GA.Chromosome;
+import org.maps.GA.Gene;
+import org.maps.GA.ScheduledTaskDetails;
+import org.maps.InputData.Comm_cost_pair;
+import org.maps.InputData.Inputs;
 
 import java.util.Arrays;
 import java.util.Vector;
 
-import static org.maps.Constants.MAX_PROCESSORS;
-import static org.maps.Constants.MAX_TASKS;
-import static org.maps.Inputs.dag;
-import static org.maps.Inputs.processing_cost;
+import static org.maps.InputData.Constants.MAX_PROCESSORS;
+import static org.maps.InputData.Constants.MAX_TASKS;
+import static org.maps.InputData.Inputs.dag;
+import static org.maps.InputData.Inputs.processing_cost;
 
 public class Heft {
     static UpwardRankPair[] upward_ranks = new UpwardRankPair[MAX_TASKS];

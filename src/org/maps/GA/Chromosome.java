@@ -1,9 +1,12 @@
-package org.maps;
+package org.maps.GA;
+
+import org.maps.InputData.Comm_cost_pair;
+import org.maps.InputData.Inputs;
 
 import java.util.*;
 
-import static org.maps.Constants.MAX_PROCESSORS;
-import static org.maps.Constants.MAX_TASKS;
+import static org.maps.InputData.Constants.MAX_PROCESSORS;
+import static org.maps.InputData.Constants.MAX_TASKS;
 
 public class Chromosome {
     public Vector<Gene> gene = new Vector<>(MAX_TASKS + 1);

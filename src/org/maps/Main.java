@@ -1,6 +1,7 @@
 package org.maps;
 
-import java.util.Vector;
+import org.maps.GA.Chromosome;
+import org.maps.Heft.Heft;
 
 public class Main {
 

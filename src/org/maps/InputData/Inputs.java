@@ -1,9 +1,9 @@
-package org.maps;
+package org.maps.InputData;
 
 import java.util.*;
 
 public class Inputs {
-    static final int[][] processing_cost = {
+    public static final int[][] processing_cost = {
                     //  1,  2,  3
                     {0, 0, 0, 0},    // 0
                     {0, 14, 16, 9},  // 1
@@ -18,7 +18,7 @@ public class Inputs {
                     {0, 21, 7, 16},  // 10
 
             };
-    static final Comm_cost_pair[][] dag = new Comm_cost_pair[][] {
+    public static final Comm_cost_pair[][] dag = new Comm_cost_pair[][] {
             {new Comm_cost_pair(0, 0)}, // 0
             {new Comm_cost_pair(2, 18), new Comm_cost_pair(3, 12), new Comm_cost_pair(4, 9), new Comm_cost_pair(5, 11), new Comm_cost_pair(6, 14)}, // 1
             {new Comm_cost_pair(8, 19), new Comm_cost_pair(9, 16)}, // 2
@@ -32,7 +32,7 @@ public class Inputs {
             {new Comm_cost_pair(0, 0)}
     };
 
-    static Vector<Set<Integer>> dependency = new Vector <>(Constants.MAX_TASKS+1);
+    public static Vector<Set<Integer>> dependency = new Vector <>(Constants.MAX_TASKS+1);
     //
 
     public static void main(String[] args) {

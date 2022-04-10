@@ -1,9 +1,11 @@
-package org.maps;
+package org.maps.GA;
+
+import org.maps.GA.Gene;
 
 public class ScheduledTaskDetails {
-    Gene g;
+    public Gene g;
     int start_time;
-    int end_time;
+    public int end_time;
 
     public ScheduledTaskDetails(Gene g, int start_time, int end_time) {
         this.g = g;
