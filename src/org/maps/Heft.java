@@ -9,44 +9,51 @@ import static org.maps.Inputs.dag;
 import static org.maps.Inputs.processing_cost;
 
 public class Heft {
-    UpwardRankPair[] upward_ranks = new UpwardRankPair[Constants.MAX_TASKS + 1];
-    float[] upward_ranks_temp = new float[Constants.MAX_TASKS + 1];
-    float[] mean_wt = new float[Constants.MAX_TASKS + 1];
+    static UpwardRankPair[] upward_ranks = new UpwardRankPair[MAX_TASKS];
+    static float[] upward_ranks_temp = new float[MAX_TASKS + 1];
+    static float[] mean_wt = new float[MAX_TASKS + 1];
 
-    private void set_mean_wt() {
+    private static void set_mean_wt() {
         for (int i = 1; i < Inputs.processing_cost.length; i++) {
             mean_wt[i] = 0;
             for (int j : Inputs.processing_cost[i]) {
                 mean_wt[i] += j;
             }
-            mean_wt[i] /= (float) Constants.MAX_PROCESSORS;
+            mean_wt[i] /= (float) MAX_PROCESSORS;
         }
     }
 
-    float calculcate_upward_rank(int i) {
+    static float calculateUpwardRank(int i) {
         if (upward_ranks_temp[i] > 0) {
             return upward_ranks_temp[i];
         }
         float max_cost = 0;
         for (Comm_cost_pair a : dag[i]) {
-            max_cost = Float.max(calculcate_upward_rank(a.to_node) + a.comm_cost, max_cost);
+            // ignore the 0th index
+            if(a.to_node == 0) continue;
+            max_cost = Float.max(calculateUpwardRank(a.to_node) + a.comm_cost, max_cost);
         }
         upward_ranks_temp[i] = max_cost + mean_wt[i];
         return upward_ranks_temp[i];
     }
 
-    private void set_upward_rank() {
-        Arrays.fill(upward_ranks_temp, 0);
-        for (int i = 1; i < dag.length; i++) {
-            upward_ranks[i].task = i;
-            upward_ranks[i].upward_rank = calculcate_upward_rank(i);
+    private static void set_upward_rank() {
+        for (int i = 1; i <= MAX_TASKS; i++) {
+            upward_ranks[i-1] = new UpwardRankPair();
+            upward_ranks[i-1].task = i;
+            upward_ranks[i-1].upward_rank = calculateUpwardRank(i);
         }
     }
 
-    public Chromosome get_heft_chromosome() {
+    public static Chromosome get_heft_chromosome() {
         Chromosome heft = new Chromosome();
         Inputs.generate_dependency_table();
         set_mean_wt();
+        Arrays.fill(upward_ranks_temp, 0);
+        for(int i = 0; i<= MAX_TASKS; i++) {
+            Gene temp = new Gene(0,0);
+            heft.gene.add(temp);
+        }
         set_upward_rank();
         Arrays.sort(upward_ranks);
 
@@ -77,8 +84,6 @@ public class Heft {
             // dependencies have already completed tasks
 
             // estimated finish time on different processors
-            int estimated_finish_time = Integer.MIN_VALUE;
-            int processor = -1;
             Vector<ScheduledTaskDetails> comparison_of_schedule = new Vector<>(MAX_PROCESSORS);
             for(int proc = 1; proc <= MAX_PROCESSORS; proc++) {
                 // step 1 : calculate communication costs from each dependency
@@ -124,12 +129,13 @@ public class Heft {
             ttemp.add(final_sched_of_task);
             heft.schedule.set(final_sched_of_task.g.processor, ttemp);
             heft.gene.set(heft_gene_index, final_sched_of_task.g);
+            completed_tasks_details.set(final_sched_of_task.g.task, final_sched_of_task);
             heft_gene_index++;
         }
         return heft;
     }
 
-    int get_comm_cost(int dep, int task) {
+    static int get_comm_cost(int dep, int task) {
         for(Comm_cost_pair ccp : dag[dep]) {
             if(ccp.to_node == task) {
                 return ccp.comm_cost;
@@ -144,7 +150,7 @@ public class Heft {
 
         @Override
         public int compareTo(UpwardRankPair o) {
-            return Float.compare(this.upward_rank, o.upward_rank);
+            return Float.compare(o.upward_rank, this.upward_rank);
         }
     }
 }

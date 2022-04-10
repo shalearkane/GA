@@ -6,7 +6,7 @@ import static org.maps.Constants.MAX_PROCESSORS;
 import static org.maps.Constants.MAX_TASKS;
 
 public class Chromosome {
-    public Vector<Gene> gene = new Vector<>(MAX_PROCESSORS + 1);
+    public Vector<Gene> gene = new Vector<>(MAX_TASKS + 1);
     public Integer makespan = -1;
     public boolean feasibility = false;
     public float fitness = -1;
