@@ -9,7 +9,7 @@ import static org.maps.InputData.Constants.MAX_PROCESSORS;
 import static org.maps.InputData.Constants.MAX_TASKS;
 
 public class Chromosome {
-    public  Gene [] gene = new Gene[MAX_TASKS + 1];
+    public Gene[] gene = new Gene[MAX_TASKS + 1];
     public Integer makespan = -1;
     public boolean feasibility = false;
     public float fitness = -1;
