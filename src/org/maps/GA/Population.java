@@ -20,8 +20,8 @@ public class Population {
                     task = rn.nextInt(MAX_TASKS) + 1;
                 }
                 queued.add(task);
-                c.gene.get(j).task = task;
-                c.gene.get(j).processor = rn.nextInt(3) + 1;
+                c.gene[j].task = task;
+                c.gene[j].processor = rn.nextInt(3) + 1;
             }
 
             if (c.feasibility) {
@@ -50,24 +50,24 @@ public class Population {
         int r = rn.nextInt(MAX_TASKS) + 1;
 
         for (int i = 1; i <= r; i++) {
-            offspring_chromo.c1.gene.set(counter_for_c1, A.gene.get(i));
+            offspring_chromo.c1.gene[counter_for_c1] =  A.gene[i];
             counter_for_c1++;
-            tasks_in_c1.add(A.gene.get(i).task);
+            tasks_in_c1.add(A.gene[i].task);
 
-            offspring_chromo.c2.gene.set(counter_for_c2, B.gene.get(i));
+            offspring_chromo.c2.gene[counter_for_c2] = B.gene[i];
             counter_for_c2++;
-            tasks_in_c2.add(B.gene.get(i).task);
+            tasks_in_c2.add(B.gene[i].task);
 
         }
 
         for (int i = 1; i <= MAX_TASKS; i++) {
-            if (!tasks_in_c1.contains(B.gene.get(i).task)) {
-                offspring_chromo.c1.gene.set(counter_for_c1, B.gene.get(i));
+            if (!tasks_in_c1.contains(B.gene[i].task)) {
+                offspring_chromo.c1.gene[i] =  B.gene[i];
                 counter_for_c1++;
             }
 
-            if (!tasks_in_c2.contains(A.gene.get(i).task)) {
-                offspring_chromo.c2.gene.set(counter_for_c2, A.gene.get(i));
+            if (!tasks_in_c2.contains(A.gene[i].task)) {
+                offspring_chromo.c2.gene[i] =  A.gene[i];
                 counter_for_c2++;
             }
         }
@@ -81,8 +81,10 @@ public class Population {
         if (r2 <= mutation_rate) {
             int a = rn.nextInt(MAX_TASKS) + 1;
             int b = rn.nextInt(MAX_TASKS) + 1;
-            if (off_spring.gene.get(a).processor != off_spring.gene.get(b).processor || off_spring.gene.get(a).task != off_spring.gene.get(b).task) {
-                Collections.swap(off_spring.gene, a, b);
+            if (off_spring.gene[a].processor != off_spring.gene[b].processor || off_spring.gene[a].task != off_spring.gene[b].task) {
+                Gene temp=  off_spring.gene[a];
+                off_spring.gene[a] = off_spring.gene[b];
+                off_spring.gene[b] = temp;
             }
         }
 

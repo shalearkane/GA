@@ -58,7 +58,7 @@ public class Heft {
         Arrays.fill(upward_ranks_temp, 0);
         for(int i = 0; i<= MAX_TASKS; i++) {
             Gene temp = new Gene(0,0);
-            heft.gene.add(temp);
+            heft.gene[i] = temp;
         }
         set_upward_rank();
         Arrays.sort(upward_ranks);
@@ -134,7 +134,7 @@ public class Heft {
             Vector <ScheduledTaskDetails> ttemp = heft.schedule.get(final_sched_of_task.g.processor);
             ttemp.add(final_sched_of_task);
             heft.schedule.set(final_sched_of_task.g.processor, ttemp);
-            heft.gene.set(heft_gene_index, final_sched_of_task.g);
+            heft.gene[heft_gene_index] = final_sched_of_task.g;
             completed_tasks_details.set(final_sched_of_task.g.task, final_sched_of_task);
             heft_gene_index++;
         }
