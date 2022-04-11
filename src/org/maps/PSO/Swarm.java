@@ -7,7 +7,7 @@ import static org.maps.InputData.Constants.*;
 public class Swarm {
     Particle[] swarm = new Particle[MAX_SWARM];
     Particle[] pbest = new Particle[MAX_SWARM];
-    Particle gbest = new Particle();
+    public Particle gbest = new Particle();
 
     public Swarm() {
         gbest.fitness = Integer.MAX_VALUE;
