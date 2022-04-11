@@ -9,7 +9,7 @@ import static org.maps.InputData.Constants.MAX_PROCESSORS;
 import static org.maps.InputData.Constants.MAX_TASKS;
 
 public class Particle extends Chromosome implements Comparable<Particle> {
-    public float[] velocity = new float[MAX_TASKS + 1];
+    public float[] velocity;
 
     @Override
     public void generate() {
@@ -24,6 +24,29 @@ public class Particle extends Chromosome implements Comparable<Particle> {
             }
             calculate_details();
         }
+    }
+
+    // copy constructor
+    public Particle(Particle o) {
+        this.gene = new Gene[MAX_TASKS+1];
+        this.velocity = new float[MAX_TASKS+1];
+        for(int i = 0; i<= MAX_TASKS; i++) {
+            this.gene[i] = new Gene(o.gene[i].task, o.gene[i].processor);
+            this.velocity[i] = o.velocity[i];
+        }
+        this.calculate_details();
+    }
+
+    public Particle() {
+        this.gene = new Gene[MAX_TASKS+1];
+        this.velocity = new float[MAX_TASKS+1];
+    }
+
+    public void print_velocity(){
+        for(float f : velocity) {
+            System.out.print(f + ", ");
+        }
+        System.out.println();
     }
 
     @Override

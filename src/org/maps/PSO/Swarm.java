@@ -17,7 +17,7 @@ public class Swarm {
             swarm[i - 1] = c_rand;
             pbest[i - 1] = c_rand;
             if (gbest.fitness > c_rand.fitness) {
-                gbest = c_rand;
+                gbest = new Particle(c_rand);
             }
         }
     }
@@ -25,15 +25,15 @@ public class Swarm {
     private void update_pbest() {
         for (int i = 0; i < MAX_SWARM; i++) {
             if (swarm[i].fitness < pbest[i].fitness) {
-                pbest[i] = swarm[i];
+                pbest[i] = new Particle(swarm[i]);
             }
         }
     }
 
     private void update_gbest() {
-        for (int i = 0; i < MAX_SWARM; i++) {
-            if (swarm[i].fitness < gbest.fitness) {
-                gbest = swarm[i];
+        for(Particle p : swarm) {
+            if(p.fitness < gbest.fitness) {
+                gbest = new Particle(p);
             }
         }
     }
@@ -63,24 +63,24 @@ public class Swarm {
         }
 
         // swap velocities
-        for (Particle p : swarm) {
+        for (final Particle p : swarm) {
             int idx_max_2 = -1;
             int idx_max_1 = -1;
-            float idx_max_vel_1 = Float.MIN_VALUE;
-            float idx_max_vel_2 = Float.MIN_VALUE;
+            float max_velocity_1 = -Float.MAX_VALUE;
+            float max_velocity_2 = -Float.MAX_VALUE;
             for (int i = 1; i <= MAX_TASKS; i++) {
-                if (p.velocity[i] > idx_max_vel_2) {
-                    if (p.velocity[i] > idx_max_vel_1) {
+                if (p.velocity[i] > max_velocity_2) {
+                    if (p.velocity[i] > max_velocity_1) {
                         // update second best values
-                        idx_max_vel_2 = idx_max_vel_1;
+                        max_velocity_2 = max_velocity_1;
                         idx_max_2 = idx_max_1;
 
                         // update first best values
-                        idx_max_vel_1 = p.velocity[i];
+                        max_velocity_1 = p.velocity[i];
                         idx_max_1 = i;
                     } else {
                         // update second best values
-                        idx_max_vel_2 = p.velocity[i];
+                        max_velocity_2 = p.velocity[i];
                         idx_max_2 = i;
                     }
                 }
@@ -88,7 +88,6 @@ public class Swarm {
 
             // swap vms of top two velocities
 
-            System.out.println(idx_max_1 + " : " + idx_max_2);
             final int vm_temp = p.gene[idx_max_1].processor;
             p.gene[idx_max_1].processor = p.gene[idx_max_2].processor;
             p.gene[idx_max_2].processor = vm_temp;
