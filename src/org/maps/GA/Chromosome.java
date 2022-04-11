@@ -19,20 +19,24 @@ public class Chromosome {
     private void set_schedule() {
         // 3 queue for task
         Vector<Queue<Gene>> taskQueueOnProcessor = new Vector<>(MAX_PROCESSORS + 1);
-        Queue<Gene> q_temp = new LinkedList<>();
+        Set<Integer> completed_tasks = new HashSet<>();
+        Map<Integer, Integer> task_to_processor = new HashMap<>();
+        Map<Integer, Integer> end_time_of_task = new HashMap<>();
+
         for (int i = 0; i <= MAX_PROCESSORS; i++) {
+            Queue<Gene> q_temp = new LinkedList<>();
             schedule.add(i, new Vector<>());
             taskQueueOnProcessor.add(i, q_temp);
         }
+
+        // initialize schedule with empty values
         for (Vector<ScheduledTaskDetails> v : schedule) {
             Gene g = new Gene(0, 0);
             ScheduledTaskDetails sds = new ScheduledTaskDetails(g, 0, 0);
             v.add(sds);
         }
-        Set<Integer> completed_tasks = new HashSet<>();
-        Map<Integer, Integer> task_to_processor = new HashMap<>();
-        Map<Integer, Integer> end_time_of_task = new HashMap<>();
-        Inputs.generate_dependency_table();
+
+        // adding genes to processor queue
         for (Gene g : gene) {
             if (g.processor == 0 || g.task == 0) continue;
             Queue<Gene> q = taskQueueOnProcessor.get(g.processor);
@@ -41,6 +45,7 @@ public class Chromosome {
             taskQueueOnProcessor.set(g.processor, q);
         }
 
+        // trying to schedule front genes from each processor queue
         boolean has_any_task_completed;
         do {
             has_any_task_completed = false;
@@ -114,7 +119,7 @@ public class Chromosome {
         average_cost /= MAX_TASKS;
     }
 
-    private void set_fitness() {
+    public void set_fitness() {
         assert average_cost != -1 : "average cost is not calculated";
         assert makespan != -1 : "makespan is not calculated";
         fitness = (float) (1.0 / (1.0 + average_cost * makespan));
@@ -139,4 +144,31 @@ public class Chromosome {
         System.out.println("fitness: " + fitness + ", makespan: " + makespan + ", average_cost: " + average_cost);
     }
 
+    public void print_schedule() {
+        System.out.println("Task Proc Strt End");
+        for (Vector<ScheduledTaskDetails> sv : schedule) {
+            for (ScheduledTaskDetails s : sv) {
+                if (s.g.task == 0 || s.g.processor == 0) continue;
+                System.out.println(s.g.task + "\t" + s.g.processor + "\t" + s.start_time + "\t" + s.end_time);
+            }
+        }
+    }
+
+    public void generate() {
+        Random random = new Random();
+        Set<Integer> already_added_task = new HashSet<>();
+        gene[0] = new Gene(0,0);
+        already_added_task.add(0);
+        feasibility = false;
+        while(!feasibility) {
+            for (int i = 1; i <= MAX_TASKS; i++) {
+                int task = 0;
+                while(already_added_task.contains(task)) {
+                    task = random.nextInt(MAX_TASKS)+1;
+                }
+                gene[i] = new Gene(task, random.nextInt(MAX_PROCESSORS) + 1);
+            }
+            calculate_details();
+        }
+    }
 }
