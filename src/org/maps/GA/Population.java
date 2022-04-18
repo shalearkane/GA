@@ -9,7 +9,7 @@ import static org.maps.Heft.Heft.get_heft_chromosome;
 import static org.maps.InputData.Constants.*;
 
 public class Population {
-    Vector<Chromosome> population_array = new Vector<>();
+    public Vector<Chromosome> population_array = new Vector<>();
     float average_fitness_val;
     Random rn = new Random();
 
@@ -152,7 +152,7 @@ public class Population {
         }
         assert population_array.size() >= 20;
         population_array.sort(new Comparator.Cmp_fitness_val());
-        if (population_array.size() > MAX_POPULATION) population_array.setSize(20);
+        if (population_array.size() > MAX_POPULATION) population_array.setSize(MAX_POPULATION);
         System.out.println(average_fitness_val);
     }
 

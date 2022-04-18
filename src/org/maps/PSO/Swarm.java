@@ -5,7 +5,7 @@ import java.util.Random;
 import static org.maps.InputData.Constants.*;
 
 public class Swarm {
-    Particle[] swarm = new Particle[MAX_SWARM];
+    public Particle[] swarm = new Particle[MAX_SWARM];
     Particle[] pbest = new Particle[MAX_SWARM];
     public Particle gbest = new Particle();
 
