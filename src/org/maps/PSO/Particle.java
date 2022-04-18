@@ -53,7 +53,7 @@ public class Particle extends Chromosome implements Comparable<Particle> {
     public void set_fitness() {
         assert average_cost != -1 : "average cost is not calculated";
         assert makespan != -1 : "makespan is not calculated";
-        fitness = average_cost + makespan;
+        fitness = (float) (0.5* average_cost + 0.5 * makespan);
     }
 
     @Override
