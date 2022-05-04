@@ -50,8 +50,8 @@ public class Population {
         Offspring offspring_chromo = new Offspring();
         Set<Integer> tasks_in_c1 = new HashSet<>();
         Set<Integer> tasks_in_c2 = new HashSet<>();
-        int counter_for_c1 = 1;
-        int counter_for_c2 = 1;
+        int counter_for_c1 = 0;
+        int counter_for_c2 = 0;
 
         offspring_chromo.c1 = new Chromosome();
         offspring_chromo.c1.gene = new Gene[MAX_TASKS + 1];
@@ -63,7 +63,7 @@ public class Population {
 
         int r = rn.nextInt(MAX_TASKS) + 1;
 
-        for (int i = 1; i <= r; i++) {
+        for (int i = 0; i <= r; i++) {
             offspring_chromo.c1.gene[counter_for_c1] = new Gene(A.gene[i].task, A.gene[i].processor);
             counter_for_c1++;
             tasks_in_c1.add(A.gene[i].task);
@@ -73,7 +73,7 @@ public class Population {
             tasks_in_c2.add(B.gene[i].task);
         }
 
-        for (int i = 1; i <= MAX_TASKS; i++) {
+        for (int i = 0; i <= MAX_TASKS; i++) {
             if (!tasks_in_c1.contains(B.gene[i].task)) {
                 offspring_chromo.c1.gene[counter_for_c1] = new Gene(B.gene[i].task, B.gene[i].processor);
                 counter_for_c1++;
@@ -133,9 +133,10 @@ public class Population {
         population_array = roulette(population_array);
 
         int limit = Math.min(population_array.size(), (int)(MAX_POPULATION*0.7));
-        for (int i = 0; i < limit - 1; i += 2) {
-            Chromosome temp_1 = mutation(crossover(population_array.get(i), population_array.get(i + 1)).c1, MUTATION_RATE);
-            Chromosome temp_2 = mutation(crossover(population_array.get(i), population_array.get(i + 1)).c2, MUTATION_RATE);
+        for (int i = 0; i < limit - 2; i += 2) {
+            Offspring offsprng = crossover(population_array.get(i), population_array.get(i + 1));
+            Chromosome temp_1 = mutation(offsprng.c1, MUTATION_RATE);
+            Chromosome temp_2 = mutation(offsprng.c2, MUTATION_RATE);
 
             temp_1.calculate_details();
             if (temp_1.feasibility) {
