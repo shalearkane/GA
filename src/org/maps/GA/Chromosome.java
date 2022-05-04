@@ -138,6 +138,7 @@ public class Chromosome {
         for (Gene g : gene) {
             System.out.print("(" + g.task + ", " + g.processor + ")");
         }
+        System.out.println();
     }
 
     public void print_details() {

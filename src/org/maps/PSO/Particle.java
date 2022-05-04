@@ -42,6 +42,16 @@ public class Particle extends Chromosome implements Comparable<Particle> {
         this.velocity = new float[MAX_TASKS+1];
     }
 
+    public Particle(Chromosome c) {
+        Random random = new Random();
+        this.gene = new Gene[MAX_TASKS+1];
+        System.arraycopy(c.gene, 0, this.gene, 0, MAX_TASKS + 1);
+        this.velocity = new float[MAX_TASKS+1];
+        for(int i = 0; i<= MAX_TASKS; i++) {
+            this.velocity[i] =   random.nextInt(10);
+        }
+    }
+
     public void print_velocity(){
         for(float f : velocity) {
             System.out.print(f + ", ");

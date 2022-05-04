@@ -1,5 +1,7 @@
 package org.maps.PSO;
 
+import org.maps.GA.Population;
+
 import java.util.Random;
 
 import static org.maps.InputData.Constants.*;
@@ -19,6 +21,17 @@ public class Swarm {
             if (gbest.fitness > c_rand.fitness) {
                 gbest = new Particle(c_rand);
             }
+        }
+    }
+
+    public Swarm(Population p) {
+        System.out.println(p.population_array.size());
+        final int population_size = p.population_array.size();
+        for (int i = 0; i < population_size; i++) {
+            swarm[i] = new Particle(p.population_array.get(i));
+        }
+        for(int i = population_size; i<MAX_SWARM; i++) {
+            swarm[i] = new Particle();
         }
     }
 

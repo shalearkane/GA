@@ -20,19 +20,20 @@ public class Population {
             Set<Integer> queued = new HashSet<>();
             c.gene[0] = new Gene(0, 0);
             for (int j = 1; j <= MAX_TASKS; j++) {
-                int task = rn.nextInt(MAX_TASKS) + 1;
+                int max_task_range = Math.min(MAX_TASKS, j+5);
+                int task = rn.nextInt(max_task_range) + 1;
                 while (queued.contains(task)) {
-                    task = rn.nextInt(MAX_TASKS) + 1;
+                    task = rn.nextInt(max_task_range) + 1;
                 }
                 queued.add(task);
-                c.gene[j] = new Gene(task, rn.nextInt(3) + 1);
+                c.gene[j] = new Gene(task, rn.nextInt(MAX_PROCESSORS) + 1);
             }
             c.calculate_details();
-
             if (c.feasibility) {
                 result.add(c);
-                c.print_chromosome();
+                c.print_details();
             } else {
+//                System.out.println("Not feasible");
                 i--;
             }
         }
@@ -40,15 +41,10 @@ public class Population {
     }
 
     void population(final Chromosome heft) {
-        int i = 0;
-        Chromosome temp;
+        System.out.println("Generating random population");
         population_array = population_gen_random();
+        population_array.add(heft);
     }
-
-
-    //copy constructor
-//    public void Offspring(Chromosome p){}
-
 
     Offspring crossover(Chromosome A, Chromosome B) {
         Offspring offspring_chromo = new Offspring();
@@ -117,7 +113,7 @@ public class Population {
         }
         for (Chromosome chromosome : population) {
             final float rand_0_1 = rn.nextFloat(1);
-            final float roulette_v = max_fitness * rand_0_1;
+            final float roulette_v = (float) (max_fitness * rand_0_1*0.5);
             if (chromosome.fitness >= roulette_v) {
                 result.add(chromosome);
             }
@@ -136,7 +132,7 @@ public class Population {
         average_fitness_val = sum_fitness / (float) population_array.size();
         population_array = roulette(population_array);
 
-        int limit = Math.min(population_array.size(), 14);
+        int limit = Math.min(population_array.size(), (int)(MAX_POPULATION*0.7));
         for (int i = 0; i < limit - 1; i += 2) {
             Chromosome temp_1 = mutation(crossover(population_array.get(i), population_array.get(i + 1)).c1, MUTATION_RATE);
             Chromosome temp_2 = mutation(crossover(population_array.get(i), population_array.get(i + 1)).c2, MUTATION_RATE);
@@ -150,23 +146,22 @@ public class Population {
             }
 
         }
-        assert population_array.size() >= 20;
         population_array.sort(new Comparator.Cmp_fitness_val());
         if (population_array.size() > MAX_POPULATION) population_array.setSize(MAX_POPULATION);
-        System.out.println(average_fitness_val);
+//        System.out.println(average_fitness_val);
     }
 
     public void Driver() {
         Chromosome heft = get_heft_chromosome();
         heft.calculate_details();
         heft.print_chromosome();
-        System.out.print("makespan heft: ");
+        System.out.println("makespan heft: ");
         System.out.println(heft.makespan);
 
         population(heft);
-        population_array.add(heft);
         for (int i = 0; i < 200; i++) {
             generation();
+            System.out.println(population_array.size());
         }
 
         Chromosome final_chromo = population_array.firstElement();
@@ -177,5 +172,6 @@ public class Population {
         for (Chromosome chromosome : population_array) {
             chromosome.print_chromosome();
         }
+        System.out.println(population_array.size());
     }
 }
