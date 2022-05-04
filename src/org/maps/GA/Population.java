@@ -1,9 +1,6 @@
 package org.maps.GA;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import static org.maps.Heft.Heft.get_heft_chromosome;
 import static org.maps.InputData.Constants.*;
@@ -20,7 +17,7 @@ public class Population {
             Set<Integer> queued = new HashSet<>();
             c.gene[0] = new Gene(0, 0);
             for (int j = 1; j <= MAX_TASKS; j++) {
-                int max_task_range = Math.min(MAX_TASKS, j+5);
+                int max_task_range = Math.min(MAX_TASKS, j + 5);
                 int task = rn.nextInt(max_task_range) + 1;
                 while (queued.contains(task)) {
                     task = rn.nextInt(max_task_range) + 1;
@@ -37,6 +34,10 @@ public class Population {
                 i--;
             }
         }
+        result.sort((o1, o2) -> (int)(o1.fitness - o2.fitness));
+        result.sort(new Comparator.Cmp_fitness_val());
+        System.out.println("This is working, right?");
+        result.firstElement().print_details();
         return result;
     }
 
@@ -113,7 +114,7 @@ public class Population {
         }
         for (Chromosome chromosome : population) {
             final float rand_0_1 = rn.nextFloat(1);
-            final float roulette_v = (float) (max_fitness * rand_0_1*0.5);
+            final float roulette_v = (float) (max_fitness * rand_0_1 * 0.5);
             if (chromosome.fitness >= roulette_v) {
                 result.add(chromosome);
             }
@@ -132,7 +133,7 @@ public class Population {
         average_fitness_val = sum_fitness / (float) population_array.size();
         population_array = roulette(population_array);
 
-        int limit = Math.min(population_array.size(), (int)(MAX_POPULATION*0.7));
+        int limit = Math.min(population_array.size(), (int) (MAX_POPULATION * 0.7));
         for (int i = 0; i < limit - 2; i += 2) {
             Offspring offsprng = crossover(population_array.get(i), population_array.get(i + 1));
             Chromosome temp_1 = mutation(offsprng.c1, MUTATION_RATE);
@@ -149,7 +150,7 @@ public class Population {
             }
 
         }
-        population_array.sort(new Comparator.Cmp_fitness_val());
+        population_array.sort((o1, o2) -> (int)(o1.fitness - o2.fitness));
         if (population_array.size() > MAX_POPULATION) population_array.setSize(MAX_POPULATION);
 //        System.out.println(average_fitness_val);
     }
@@ -162,7 +163,7 @@ public class Population {
         System.out.println(heft.makespan);
 
         population(heft);
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < MAX_GENERATION; i++) {
             generation();
             System.out.println(population_array.size());
         }

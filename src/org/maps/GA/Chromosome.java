@@ -122,7 +122,7 @@ public class Chromosome {
     public void set_fitness() {
         assert average_cost != -1 : "average cost is not calculated";
         assert makespan != -1 : "makespan is not calculated";
-        fitness = (float) (1.0 / (1.0 + average_cost * makespan));
+        fitness = makespan;
     }
 
     public void calculate_details() {
