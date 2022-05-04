@@ -136,12 +136,14 @@ public class Population {
         for (int i = 0; i < limit - 1; i += 2) {
             Chromosome temp_1 = mutation(crossover(population_array.get(i), population_array.get(i + 1)).c1, MUTATION_RATE);
             Chromosome temp_2 = mutation(crossover(population_array.get(i), population_array.get(i + 1)).c2, MUTATION_RATE);
+
+            temp_1.calculate_details();
             if (temp_1.feasibility) {
-                temp_1.calculate_details();
                 population_array.add(temp_1);
             }
+
+            temp_2.calculate_details();
             if (temp_2.feasibility) {
-                temp_2.calculate_details();
                 population_array.add(temp_2);
             }
 
@@ -168,6 +170,8 @@ public class Population {
         final_chromo.print_chromosome();
         System.out.print("makespan final: ");
         System.out.println(final_chromo.makespan);
+        System.out.println(final_chromo.fitness);
+        System.out.println(heft.fitness);
 
         for (Chromosome chromosome : population_array) {
             chromosome.print_chromosome();
