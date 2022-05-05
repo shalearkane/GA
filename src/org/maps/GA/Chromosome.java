@@ -17,6 +17,7 @@ public class Chromosome {
     public Vector<Vector<ScheduledTaskDetails>> schedule = new Vector<>(MAX_PROCESSORS + 1);
 
     private void set_schedule() {
+        schedule.clear();
         // 3 queue for task
         Vector<Queue<Gene>> taskQueueOnProcessor = new Vector<>(MAX_PROCESSORS + 1);
         boolean []completed_tasks = new boolean[MAX_TASKS+1];
