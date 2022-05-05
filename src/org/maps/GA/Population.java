@@ -1,28 +1,29 @@
 package org.maps.GA;
 
-import java.util.*;
+import java.util.Random;
+import java.util.Vector;
 
 import static org.maps.Heft.Heft.get_heft_chromosome;
 import static org.maps.InputData.Constants.*;
 
 public class Population {
     public Vector<Chromosome> population_array = new Vector<>();
-    float average_fitness_val;
+    double average_fitness_val;
     Random rn = new Random();
 
     Vector<Chromosome> population_gen_random() {
         Vector<Chromosome> result = new Vector<>();
         for (int i = 0; i < MAX_POPULATION - 1; i++) {
             Chromosome c = new Chromosome();
-            Set<Integer> queued = new HashSet<>();
+            boolean[] queued = new boolean[MAX_TASKS + 1];
             c.gene[0] = new Gene(0, 0);
             for (int j = 1; j <= MAX_TASKS; j++) {
                 int max_task_range = Math.min(MAX_TASKS, j + 5);
                 int task = rn.nextInt(max_task_range) + 1;
-                while (queued.contains(task)) {
+                while (queued[task]) {
                     task = rn.nextInt(max_task_range) + 1;
                 }
-                queued.add(task);
+                queued[task] = true;
                 c.gene[j] = new Gene(task, rn.nextInt(MAX_PROCESSORS) + 1);
             }
             c.calculate_details();
@@ -34,8 +35,7 @@ public class Population {
                 i--;
             }
         }
-        result.sort((o1, o2) -> (int)(o1.fitness - o2.fitness));
-        result.sort(new Comparator.Cmp_fitness_val());
+        result.sort((o1, o2) -> Double.compare(o2.fitness, o1.fitness));
         System.out.println("This is working, right?");
         result.firstElement().print_details();
         return result;
@@ -49,8 +49,9 @@ public class Population {
 
     Offspring crossover(Chromosome A, Chromosome B) {
         Offspring offspring_chromo = new Offspring();
-        Set<Integer> tasks_in_c1 = new HashSet<>();
-        Set<Integer> tasks_in_c2 = new HashSet<>();
+        boolean[] tasks_in_c1 = new boolean[MAX_TASKS + 1];
+        boolean[] tasks_in_c2 = new boolean[MAX_TASKS + 1];
+
         int counter_for_c1 = 0;
         int counter_for_c2 = 0;
 
@@ -67,20 +68,20 @@ public class Population {
         for (int i = 0; i <= r; i++) {
             offspring_chromo.c1.gene[counter_for_c1] = new Gene(A.gene[i].task, A.gene[i].processor);
             counter_for_c1++;
-            tasks_in_c1.add(A.gene[i].task);
+            tasks_in_c1[A.gene[i].task] = true;
 
             offspring_chromo.c2.gene[counter_for_c2] = new Gene(B.gene[i].task, B.gene[i].processor);
             counter_for_c2++;
-            tasks_in_c2.add(B.gene[i].task);
+            tasks_in_c2[B.gene[i].task] = true;
         }
 
         for (int i = 0; i <= MAX_TASKS; i++) {
-            if (!tasks_in_c1.contains(B.gene[i].task)) {
+            if (!tasks_in_c1[B.gene[i].task]) {
                 offspring_chromo.c1.gene[counter_for_c1] = new Gene(B.gene[i].task, B.gene[i].processor);
                 counter_for_c1++;
             }
 
-            if (!tasks_in_c2.contains(A.gene[i].task)) {
+            if (!tasks_in_c2[A.gene[i].task]) {
                 offspring_chromo.c2.gene[counter_for_c2] = new Gene(A.gene[i].task, A.gene[i].processor);
                 counter_for_c2++;
             }
@@ -108,13 +109,13 @@ public class Population {
 
     Vector<Chromosome> roulette(Vector<Chromosome> population) {
         Vector<Chromosome> result = new Vector<>();
-        float max_fitness = 0;
+        double max_fitness = 0;
         for (Chromosome chromosome : population) {
             max_fitness = Math.max(chromosome.fitness, max_fitness);
         }
         for (Chromosome chromosome : population) {
             final float rand_0_1 = rn.nextFloat(1);
-            final float roulette_v = (float) (max_fitness * rand_0_1 * 0.5);
+            final float roulette_v = (float) (max_fitness * rand_0_1 * 0.8);
             if (chromosome.fitness >= roulette_v) {
                 result.add(chromosome);
             }
@@ -124,13 +125,13 @@ public class Population {
 
 
     void generation() {
-        float sum_fitness = 0;
+        double sum_fitness = 0;
         for (Chromosome chromosome : population_array) {
             chromosome.calculate_details();
             sum_fitness = sum_fitness + chromosome.fitness;
         }
 
-        average_fitness_val = sum_fitness / (float) population_array.size();
+        average_fitness_val = sum_fitness / (double) population_array.size();
         population_array = roulette(population_array);
 
         int limit = Math.min(population_array.size(), (int) (MAX_POPULATION * 0.7));
@@ -150,7 +151,7 @@ public class Population {
             }
 
         }
-        population_array.sort((o1, o2) -> (int)(o1.fitness - o2.fitness));
+        population_array.sort((o1, o2) -> Double.compare(o2.fitness, o1.fitness));
         if (population_array.size() > MAX_POPULATION) population_array.setSize(MAX_POPULATION);
 //        System.out.println(average_fitness_val);
     }

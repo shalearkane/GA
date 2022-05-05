@@ -63,11 +63,11 @@ public class Particle extends Chromosome implements Comparable<Particle> {
     public void set_fitness() {
         assert average_cost != -1 : "average cost is not calculated";
         assert makespan != -1 : "makespan is not calculated";
-        fitness = (float) (0.5* average_cost + 0.5 * makespan);
+        fitness = makespan;
     }
 
     @Override
     public int compareTo(Particle o) {
-        return Float.compare(o.fitness, this.fitness);
+        return Double.compare(o.fitness, this.fitness);
     }
 }

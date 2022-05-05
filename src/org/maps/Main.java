@@ -7,6 +7,8 @@ import org.maps.Heft.Heft;
 import org.maps.InputData.Inputs;
 import org.maps.PSO.Swarm;
 
+import static org.maps.InputData.Constants.MAX_GENERATION;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -27,7 +29,7 @@ public class Main {
         gp.p.Driver();
 
         gp.convert_population_to_swarm();
-        for(int i = 0; i<100; i++) {
+        for(int i = 0; i<MAX_GENERATION; i++) {
             gp.s.proceed_generation();
             gp.s.print_gbest();
         }
