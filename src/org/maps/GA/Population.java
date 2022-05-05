@@ -59,9 +59,6 @@ public class Population {
         offspring_chromo.c1.gene = new Gene[MAX_TASKS + 1];
         offspring_chromo.c2 = new Chromosome();
         offspring_chromo.c2.gene = new Gene[MAX_TASKS + 1];
-//        Gene zero = new Gene(0, 0);
-//        offspring_chromo.c1.gene[0] = zero;
-//        offspring_chromo.c2.gene[0] = zero;
 
         int r = rn.nextInt(MAX_TASKS) + 1;
 
