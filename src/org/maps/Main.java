@@ -13,27 +13,26 @@ public class Main {
 
     public static void main(String[] args) {
         Inputs.generate_dependency_table();
-//        Swarm ss = new Swarm();
-//        for(int i = 0; i<100; i++) {
-//            ss.proceed_generation();
-//            ss.print_gbest();
-//        }
-//        ss.gbest.print_velocity();
-//        ss.gbest.print_chromosome();
 
-//        ss.gbest.print_schedule();
-//        System.out.println();
+        // Just PSO
+        Swarm ss = new Swarm();
+        for(int i = 0; i<MAX_GENERATION; i++) {
+            ss.proceed_generation();
+        }
+        System.out.println("PSO results : ");
+        ss.gbest.print_details();
 
         GA_PSO gp = new GA_PSO();
         gp.p = new Population();
         gp.p.Driver();
 
-        gp.convert_population_to_swarm();
-        for(int i = 0; i<MAX_GENERATION; i++) {
-            gp.s.proceed_generation();
-            gp.s.print_gbest();
-        }
+        System.out.println("GA results : ");
+        gp.p.population_array.firstElement().print_details();
 
+        gp.convert_population_to_swarm();
+        gp.s.Driver();
+
+        System.out.println("PSO (GAPSO) results : ");
         gp.s.print_gbest();
 
     }

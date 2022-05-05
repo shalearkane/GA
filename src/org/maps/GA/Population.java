@@ -29,15 +29,12 @@ public class Population {
             c.calculate_details();
             if (c.feasibility) {
                 result.add(c);
-                c.print_details();
             } else {
-//                System.out.println("Not feasible");
+
                 i--;
             }
         }
         result.sort((o1, o2) -> Double.compare(o2.fitness, o1.fitness));
-        System.out.println("This is working, right?");
-        result.firstElement().print_details();
         return result;
     }
 
@@ -134,6 +131,17 @@ public class Population {
         int limit = Math.min(population_array.size(), (int) (MAX_POPULATION * 0.7));
         for (int i = 0; i < limit - 2; i += 2) {
             Offspring offsprng = crossover(population_array.get(i), population_array.get(i + 1));
+
+            offsprng.c1.calculate_details();
+            if(offsprng.c1.feasibility) {
+                population_array.add(offsprng.c1);
+            }
+
+            offsprng.c2.calculate_details();
+            if(offsprng.c2.feasibility) {
+                population_array.add(offsprng.c2);
+            }
+
             Chromosome temp_1 = mutation(offsprng.c1, MUTATION_RATE);
             Chromosome temp_2 = mutation(offsprng.c2, MUTATION_RATE);
 
@@ -156,26 +164,12 @@ public class Population {
     public void Driver() {
         Chromosome heft = get_heft_chromosome();
         heft.calculate_details();
-        heft.print_chromosome();
-        System.out.println("makespan heft: ");
-        System.out.println(heft.makespan);
+        System.out.print("Heft details: ");
+        heft.print_details();
 
         population(heft);
         for (int i = 0; i < MAX_GENERATION; i++) {
             generation();
-            System.out.println(population_array.size());
         }
-
-        Chromosome final_chromo = population_array.firstElement();
-        final_chromo.print_chromosome();
-        System.out.print("makespan final: ");
-        System.out.println(final_chromo.makespan);
-        System.out.println(final_chromo.fitness);
-        System.out.println(heft.fitness);
-
-        for (Chromosome chromosome : population_array) {
-            chromosome.print_chromosome();
-        }
-        System.out.println(population_array.size());
     }
 }

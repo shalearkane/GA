@@ -15,8 +15,12 @@ public class GA_PSO {
         s = new Swarm();
         final int population_size = p.population_array.size();
         for (int i = 0; i < population_size; i++) {
-            s.swarm[i] = new Particle(p.population_array.get(i));
-            s.swarm[i].calculate_details();
+            Chromosome c = p.population_array.get(i);
+            c.calculate_details();
+            if(c.feasibility) {
+                c.print_details();
+                s.swarm[i] = new Particle(c);
+            }
         }
 
         for(int i = population_size; i<MAX_SWARM; i++) {
