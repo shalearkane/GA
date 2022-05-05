@@ -24,17 +24,6 @@ public class Swarm {
         }
     }
 
-    public Swarm(Population p) {
-        System.out.println(p.population_array.size());
-        final int population_size = p.population_array.size();
-        for (int i = 0; i < population_size; i++) {
-            swarm[i] = new Particle(p.population_array.get(i));
-        }
-        for(int i = population_size; i<MAX_SWARM; i++) {
-            swarm[i] = new Particle();
-        }
-    }
-
     private void update_pbest() {
         for (int i = 0; i < MAX_SWARM; i++) {
             if (swarm[i].fitness < pbest[i].fitness) {
@@ -108,6 +97,12 @@ public class Swarm {
         }
         update_pbest();
         update_gbest();
+    }
+
+    public void Driver() {
+        for(int i = 0; i<MAX_GENERATION; i++) {
+            proceed_generation();
+        }
     }
 
     public void print_gbest() {
