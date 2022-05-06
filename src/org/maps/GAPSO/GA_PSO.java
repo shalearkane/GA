@@ -18,7 +18,6 @@ public class GA_PSO {
             Chromosome c = p.population_array.get(i);
             c.calculate_details();
             if(c.feasibility) {
-                c.print_details();
                 s.swarm[i] = new Particle(c);
             }
         }

@@ -18,7 +18,7 @@ public class Population {
             boolean[] queued = new boolean[MAX_TASKS + 1];
             c.gene[0] = new Gene(0, 0);
             for (int j = 1; j <= MAX_TASKS; j++) {
-                int max_task_range = Math.min(MAX_TASKS, j + 5);
+                int max_task_range = Math.min(MAX_TASKS, j + 6);
                 int task = rn.nextInt(max_task_range) + 1;
                 while (queued[task]) {
                     task = rn.nextInt(max_task_range) + 1;
@@ -39,7 +39,6 @@ public class Population {
     }
 
     void population(final Chromosome heft) {
-        System.out.println("Generating random population");
         population_array = population_gen_random();
         population_array.add(heft);
     }
@@ -132,14 +131,16 @@ public class Population {
         for (int i = 0; i < limit - 2; i += 2) {
             Offspring offsprng = crossover(population_array.get(i), population_array.get(i + 1));
 
-            offsprng.c1.calculate_details();
-            if(offsprng.c1.feasibility) {
-                population_array.add(offsprng.c1);
+            Chromosome c1 = offsprng.c1;
+            c1.calculate_details();
+            if(c1.feasibility) {
+                population_array.add(c1);
             }
 
-            offsprng.c2.calculate_details();
-            if(offsprng.c2.feasibility) {
-                population_array.add(offsprng.c2);
+            Chromosome c2 = offsprng.c2;
+            c2.calculate_details();
+            if(c2.feasibility) {
+                population_array.add(c2);
             }
 
             Chromosome temp_1 = mutation(offsprng.c1, MUTATION_RATE);
@@ -164,7 +165,7 @@ public class Population {
     public void Driver() {
         Chromosome heft = get_heft_chromosome();
         heft.calculate_details();
-        System.out.print("Heft details: ");
+        System.out.print("\nHeft details: ");
         heft.print_details();
 
         population(heft);

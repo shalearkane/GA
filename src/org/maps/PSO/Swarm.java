@@ -1,7 +1,5 @@
 package org.maps.PSO;
 
-import org.maps.GA.Population;
-
 import java.util.Random;
 
 import static org.maps.InputData.Constants.*;
@@ -20,12 +18,18 @@ public class Swarm {
             pbest[i - 1] = c_rand;
             if (gbest.fitness > c_rand.fitness) {
                 gbest = new Particle(c_rand);
+                gbest.calculate_details();
+                if(gbest.fitness == -1) {
+                    System.out.print("fuck");
+                    System.exit(-1);
+                }
             }
         }
     }
 
     private void update_pbest() {
         for (int i = 0; i < MAX_SWARM; i++) {
+//            if (swarm[i].fitness < 0) continue;
             if (swarm[i].fitness < pbest[i].fitness) {
                 pbest[i] = new Particle(swarm[i]);
             }
@@ -34,8 +38,11 @@ public class Swarm {
 
     private void update_gbest() {
         for(Particle p : swarm) {
-            if(p.fitness < gbest.fitness) {
+            p.calculate_details();
+//            if (p.fitness < 0) continue;
+            if (p.fitness < gbest.fitness) {
                 gbest = new Particle(p);
+                gbest.calculate_details();
             }
         }
     }
@@ -100,7 +107,15 @@ public class Swarm {
     }
 
     public void Driver() {
-        for(int i = 0; i<MAX_GENERATION; i++) {
+        for (Particle p : swarm) {
+            if (p.fitness < 0) {
+                p.calculate_details();
+                if (p.fitness < 0) {
+                    System.exit(-1);
+                }
+            }
+        }
+        for (int i = 0; i < MAX_GENERATION; i++) {
             proceed_generation();
         }
     }

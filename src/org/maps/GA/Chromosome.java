@@ -1,6 +1,6 @@
 package org.maps.GA;
 
-import org.maps.InputData.Comm_cost_pair;
+import org.maps.InputData.CCP;
 import org.maps.InputData.Inputs;
 
 import java.util.*;
@@ -64,7 +64,7 @@ public class Chromosome {
                         dependencies_satisfied = false;
                         break;
                     }
-                    for (Comm_cost_pair ccp : Inputs.dag[d_task]) {
+                    for (CCP ccp : Inputs.dag[d_task]) {
                         if (ccp.to_node == g.task) {
                             if (task_to_processor[d_task] != g.processor) {
                                 int comm_ends = ccp.comm_cost + end_time_of_task[d_task];

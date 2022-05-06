@@ -3,7 +3,7 @@ package org.maps.Heft;
 import org.maps.GA.Chromosome;
 import org.maps.GA.Gene;
 import org.maps.GA.ScheduledTaskDetails;
-import org.maps.InputData.Comm_cost_pair;
+import org.maps.InputData.CCP;
 import org.maps.InputData.Inputs;
 
 import java.util.Arrays;
@@ -34,7 +34,7 @@ public class Heft {
             return upward_ranks_temp[i];
         }
         float max_cost = 0;
-        for (Comm_cost_pair a : dag[i]) {
+        for (CCP a : dag[i]) {
             // ignore the 0th index
             if(a.to_node == 0) continue;
             max_cost = Float.max(calculateUpwardRank(a.to_node) + a.comm_cost, max_cost);
@@ -142,7 +142,7 @@ public class Heft {
     }
 
     static int get_comm_cost(int dep, int task) {
-        for(Comm_cost_pair ccp : dag[dep]) {
+        for(CCP ccp : dag[dep]) {
             if(ccp.to_node == task) {
                 return ccp.comm_cost;
             }

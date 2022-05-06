@@ -19,22 +19,21 @@ public class Main {
         for(int i = 0; i<MAX_GENERATION; i++) {
             ss.proceed_generation();
         }
-        System.out.println("PSO results : ");
+        System.out.print("\nPSO results : ");
         ss.gbest.print_details();
 
         GA_PSO gp = new GA_PSO();
         gp.p = new Population();
         gp.p.Driver();
 
-        System.out.println("GA results : ");
+        System.out.print("\nGA results : ");
         gp.p.population_array.firstElement().print_details();
 
         gp.convert_population_to_swarm();
         gp.s.Driver();
 
-        System.out.println("PSO (GAPSO) results : ");
+        System.out.print("\nPSO (GAPSO) results : ");
         gp.s.print_gbest();
-
+        gp.s.gbest.print_chromosome();
     }
-    // (1 : 3), (3 : 3), (4 : 2), (2 : 1), (5 : 3), (6 : 2), (9 : 2), (7 : 3), (8 : 1), (10 : 2),
 }
